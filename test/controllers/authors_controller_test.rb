@@ -8,6 +8,5 @@ class AuthorsControllerTest < ActionDispatch::IntegrationTest
         headers: {'Content-Type' => 'application/vnd.api+json'}
       assert_response :success
     end
-  
   end
 end
