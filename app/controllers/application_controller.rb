@@ -1,4 +1,4 @@
-class ApplicationController < ActionController::Base
+class ApplicationController < ActionController::API
   include JSONAPI::ActsAsResourceController
-  skip_before_action :verify_authenticity_token
+  # skip_before_action :verify_authenticity_token
 end
