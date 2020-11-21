@@ -2,7 +2,7 @@
 
 Steps are necessary to get the application up and running.
 
-##Getting Started Steps
+## Getting Started Steps
 
 ```bash
 docker volume create --name=pgdata
@@ -18,6 +18,10 @@ docker-compose run dev yarn install --check-files
 
 ```bash
 docker-compose exec dev rake db:create
+```
+
+```bash
+docker-compose exec dev rake db:migrate
 ```
 
 ```bash
