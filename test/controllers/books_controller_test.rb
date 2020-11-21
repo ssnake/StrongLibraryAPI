@@ -22,39 +22,43 @@ class BooksControllerTest < ActionDispatch::IntegrationTest
       assert_response :success
     end
   end
-  test "create2" do
-    
-    assert_difference "Book.count" do
-      post author_relationships_books_path(authors(:one).id), 
-        params: 
-          {
-            data: {
-              type: :books, 
-              attributes: {"title": "hello world"},
-              # relationships: {
-              #   author: {
-              #     links: {
-              #       related: author_relationships_books_path(authors(:one).id)
-              #     }
-              #   }
-              # },
-              links: {
-                self: books_path,
-                related: author_relationships_books_path(authors(:one).id)
-              },
-            },
-            links: {
-              self: books_path,
-              related: author_relationships_books_path(authors(:one).id)
-            },
-            included: {
 
-            }
+  test "get all books" do
+    get books_path, headers: {'Content-Type' => 'application/vnd.api+json'}
+    assert_response :success
+    j = JSON.parse @response.body
+    assert_equal books.count, j['data'].length
+  end
 
-            
-          }.to_json,
-        headers: {'Content-Type' => 'application/vnd.api+json'}
+  test "get books for first author" do
+    get author_relationships_books_path(authors(:one).id)
+    assert_response :success
+    j = JSON.parse @response.body
+    assert_equal authors(:one).books.length, j['data'].length
+  end
+
+  test "update book" do
+    old_title = books(:one).title
+    patch book_path(books(:one).id),
+      params: {
+        data: {
+          type: :books,
+          id: books(:one).id,
+          attributes: {title: "changed" }
+        }
+      }.to_json,
+      headers: {'Content-Type' => 'application/vnd.api+json'}
+
+    assert_response :success
+    assert_not_equal old_title, books(:one).reload.title
+    assert_equal "changed", books(:one).title
+  end
+
+  test "delete book" do
+    assert_difference "Book.count", -1 do
+      delete book_path(books(:one).id)
       assert_response :success
     end
-  end  
+
+  end
 end
