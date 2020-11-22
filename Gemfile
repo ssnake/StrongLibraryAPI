@@ -56,3 +56,4 @@ gem 'jsonapi-resources', '~>0.10'
 gem 'pg'
 gem 'rack-cors'
 gem "jwt_sessions"
+gem 'bcrypt'
