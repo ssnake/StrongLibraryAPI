@@ -1,3 +1,3 @@
-class AuthorsController < ApplicationController
+class AuthorsController < ResourcesController
 
 end
