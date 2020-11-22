@@ -1,8 +1,14 @@
 require 'test_helper'
 
 class BooksControllerTest < ActionDispatch::IntegrationTest
-  test "create" do
-    
+  def setup
+    super
+    get login_create_url(email: users(:one).email, password: '123')
+    @token = JSON.parse(@response.body)['access']
+    @headers = {"Content-Type": "application/vnd.api+json", "Authorization": "Bearer #{@token}"}
+  end
+  
+  test "create" do  
     assert_difference "Book.count" do
       post books_path, 
         params: 
@@ -15,23 +21,23 @@ class BooksControllerTest < ActionDispatch::IntegrationTest
                   data: {type: :authors, id: authors(:one).id}
                 }
               }
-            },
-            
+            }
           }.to_json,
-        headers: {'Content-Type' => 'application/vnd.api+json'}
+        headers: @headers  
+
       assert_response :success
     end
   end
 
   test "get all books" do
-    get books_path, headers: {'Content-Type' => 'application/vnd.api+json'}
+    get books_path, headers: @headers
     assert_response :success
     j = JSON.parse @response.body
     assert_equal books.count, j['data'].length
   end
 
   test "get books for first author" do
-    get author_relationships_books_path(authors(:one).id)
+    get author_relationships_books_path(authors(:one).id), headers: @headers
     assert_response :success
     j = JSON.parse @response.body
     assert_equal authors(:one).books.length, j['data'].length
@@ -47,7 +53,7 @@ class BooksControllerTest < ActionDispatch::IntegrationTest
           attributes: {title: "changed" }
         }
       }.to_json,
-      headers: {'Content-Type' => 'application/vnd.api+json'}
+      headers: @headers
 
     assert_response :success
     assert_not_equal old_title, books(:one).reload.title
@@ -56,7 +62,7 @@ class BooksControllerTest < ActionDispatch::IntegrationTest
 
   test "delete book" do
     assert_difference "Book.count", -1 do
-      delete book_path(books(:one).id)
+      delete book_path(books(:one).id), headers: @headers
       assert_response :success
     end
 

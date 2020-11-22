@@ -1,17 +1,22 @@
 require 'test_helper'
 
 class AuthorsControllerTest < ActionDispatch::IntegrationTest
+	def setup
+		get login_create_url(email: users(:one).email, password: '123')
+    @token = JSON.parse(@response.body)['access']
+    @headers = {"Content-Type": "application/vnd.api+json", "Authorization": "Bearer #{@token}"}
+	end
   test "create" do
     assert_difference "Author.count" do
       post authors_path, 
         params: {data: {type: :authors, attributes: {"first-name": "fn", "last-name": "ln"}}}.to_json,
-        headers: {'Content-Type' => 'application/vnd.api+json'}
+        headers: @headers
       assert_response :success
     end
   end
 
   test "get all authors" do
-  	get authors_path, headers: {'Content-Type' => 'application/vnd.api+json'}
+  	get authors_path, headers: @headers
   	assert_response :success
   	j = JSON.parse @response.body
   	assert_equal authors.length, j['data'].length
@@ -27,7 +32,7 @@ class AuthorsControllerTest < ActionDispatch::IntegrationTest
 	  			attributes: {"first-name": "changed"}
 	  		}
   		}.to_json,
-  		headers: {'Content-Type' => 'application/vnd.api+json'}
+  		headers: @headers
   	
   	assert_response :success
   	
@@ -39,7 +44,7 @@ class AuthorsControllerTest < ActionDispatch::IntegrationTest
   test "detele authors" do
   	assert_difference "Author.count", -1 do
   		assert_difference "Book.count", -authors(:one).books.count do
-  			delete author_path(authors(:one).id), headers: {'Content-Type' => 'application/vnd.api+json'}
+  			delete author_path(authors(:one).id), headers: @headers
   		end
   	end
   end
