@@ -37,6 +37,7 @@ class AuthorsControllerTest < ActionDispatch::IntegrationTest
   	assert_not_equal old_first_name, authors(:one).reload.first_name
   	assert_equal "changed", authors(:one).first_name
   end
+
   test "detele authors" do
   	assert_difference "Author.count", -1 do
   		assert_difference "Book.count", -authors(:one).books.count do
@@ -44,11 +45,14 @@ class AuthorsControllerTest < ActionDispatch::IntegrationTest
   		end
   	end
   end
-  
-  test 'find author' do
+
+  test "find author" do
   	get authors_path(filter:{"first-name": "bara"}), headers: @headers
   	j = JSON.parse @response.body
   	assert_equal 1, j['data'].count
   	assert_equal authors(:one).id, j['data'][0]['id'].to_i
   end
+
+
+
 end

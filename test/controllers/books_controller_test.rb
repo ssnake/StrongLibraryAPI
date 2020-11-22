@@ -59,6 +59,22 @@ class BooksControllerTest < ActionDispatch::IntegrationTest
       delete book_path(books(:one).id), headers: @headers
       assert_response :success
     end
-
   end
+
+  test "find all author's books by first name" do
+    #all books by Barak Obama
+    get books_path(filter: {authors: "bara"}), headers: @headers
+    assert_response :success
+    j = JSON.parse @response.body
+    assert_equal authors(:one).books.count, j['data'].length
+  end
+
+  test "find all author's books by last name" do
+    #all books by Donald Trump
+    get books_path(filter: {authors: "tru"}), headers: @headers
+    assert_response :success
+    j = JSON.parse @response.body
+    assert_equal authors(:two).books.count, j['data'].length
+  end
+
 end
