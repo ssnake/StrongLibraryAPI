@@ -1,7 +1,7 @@
 require 'test_helper'
 
 class AuthorsControllerTest < ActionDispatch::IntegrationTest
-	
+
   test "create" do
     assert_difference "Author.count" do
       post authors_path, 
@@ -43,5 +43,12 @@ class AuthorsControllerTest < ActionDispatch::IntegrationTest
   			delete author_path(authors(:one).id), headers: @headers
   		end
   	end
+  end
+  
+  test 'find author' do
+  	get authors_path(filter:{"first-name": "bara"}), headers: @headers
+  	j = JSON.parse @response.body
+  	assert_equal 1, j['data'].count
+  	assert_equal authors(:one).id, j['data'][0]['id'].to_i
   end
 end
