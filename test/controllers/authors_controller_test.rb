@@ -1,11 +1,7 @@
 require 'test_helper'
 
 class AuthorsControllerTest < ActionDispatch::IntegrationTest
-	def setup
-		get login_create_url(email: users(:one).email, password: '123')
-    @token = JSON.parse(@response.body)['access']
-    @headers = {"Content-Type": "application/vnd.api+json", "Authorization": "Bearer #{@token}"}
-	end
+	
   test "create" do
     assert_difference "Author.count" do
       post authors_path, 

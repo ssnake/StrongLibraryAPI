@@ -1,12 +1,6 @@
 require 'test_helper'
 
 class BooksControllerTest < ActionDispatch::IntegrationTest
-  def setup
-    super
-    get login_create_url(email: users(:one).email, password: '123')
-    @token = JSON.parse(@response.body)['access']
-    @headers = {"Content-Type": "application/vnd.api+json", "Authorization": "Bearer #{@token}"}
-  end
   
   test "create" do  
     assert_difference "Book.count" do
